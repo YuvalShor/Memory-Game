@@ -1,0 +1,2 @@
+C:\Users\Yuval\Desktop\C# Excercises\B20 Ex02 YuvalShor 308244458 AvitalShumonov 313303679\B20_Ex02_1\obj\Debug\B20_Ex02_1.csprojAssemblyReference.cache
+C:\Users\Yuval\Desktop\C# Excercises\B20 Ex02 YuvalShor 308244458 AvitalShumonov 313303679\B20_Ex02_1\obj\Debug\B20_Ex02_1.csproj.CoreCompileInputs.cache
