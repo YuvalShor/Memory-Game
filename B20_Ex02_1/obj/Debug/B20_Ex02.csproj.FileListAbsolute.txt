@@ -1,0 +1,9 @@
+C:\Users\USER\source\repos\B20_Ex02\B20_Ex02_1\obj\Debug\B20_Ex02.csprojAssemblyReference.cache
+C:\Users\USER\source\repos\B20_Ex02\B20_Ex02_1\obj\Debug\B20_Ex02.csproj.CoreCompileInputs.cache
+C:\Users\USER\source\repos\B20_Ex02\B20_Ex02_1\bin\Debug\B20_Ex02.exe.config
+C:\Users\USER\source\repos\B20_Ex02\B20_Ex02_1\bin\Debug\B20_Ex02.exe
+C:\Users\USER\source\repos\B20_Ex02\B20_Ex02_1\bin\Debug\B20_Ex02.pdb
+C:\Users\USER\source\repos\B20_Ex02\B20_Ex02_1\obj\Debug\B20_Ex02.exe
+C:\Users\USER\source\repos\B20_Ex02\B20_Ex02_1\obj\Debug\B20_Ex02.pdb
+C:\Users\USER\source\repos\B20_Ex02\B20_Ex02_1\bin\Debug\Ex02.ConsoleUtils.dll
+C:\Users\USER\source\repos\B20_Ex02\B20_Ex02_1\obj\Debug\B20_Ex02.csproj.CopyComplete
