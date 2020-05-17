@@ -4,32 +4,33 @@ namespace B20_Ex02
 {
     internal class Player
     {
-        private string m_playerName;
-        private int m_playerScore;
-        private ePlayerTypes m_playerType;
+        private string m_PlayerPlayerName;
+        private int m_PlayerScore;
+        private ePlayerTypes m_Type;
 
-        public string Name
+        public Player(string i_PlayerPlayerName, ePlayerTypes i_Type)
         {
-            get
-            {
-                return m_playerName;
-            }
-            set
-            {
-                m_playerName = value;
-            }
+            m_PlayerPlayerName = i_PlayerPlayerName;
+            m_Type = i_Type;
+            m_PlayerScore = 0;
+        }
+
+        public string PlayerName
+        {
+            get => m_PlayerPlayerName;
+            set => m_PlayerPlayerName = value;
+        }
+
+        public int PlayerScore
+        {
+            get => m_PlayerScore;
+            set => m_PlayerScore = value;
         }
 
         public ePlayerTypes Type
         {
-            get
-            {
-                return m_playerType;
-            }
-            set
-            {
-                m_playerType = value;
-            }
+            get => m_Type;
+            set => m_Type = value;
         }
     }
 }
