@@ -22,6 +22,7 @@ namespace B20_Ex02
             get => m_Letter;
             set => m_Letter = value;
         }
+
         public bool IsHidden
         {
             get => m_IsHidden;

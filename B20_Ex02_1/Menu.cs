@@ -33,7 +33,7 @@ namespace B20_Ex02
                 Console.WriteLine("Choose board width:");
                 o_Width = GameUI.GetNumberInRange(4, 6);
 
-                isBoardSizeEven = o_Height * o_Width % 2 == 0;
+                isBoardSizeEven = (o_Height * o_Width) % 2 == 0;
             }
         }
 

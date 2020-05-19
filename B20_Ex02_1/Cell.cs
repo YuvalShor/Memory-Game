@@ -18,6 +18,7 @@ namespace B20_Ex02
             get => m_Row;
             set => m_Row = value;
         }
+
         public int Column
         {
             get => m_Column;
@@ -26,7 +27,7 @@ namespace B20_Ex02
 
         public override string ToString()
         {
-            return String.Format("{0}{1}", (char)(m_Column + 'A'), (char)(m_Row + '1'));
+            return string.Format("{0}{1}", (char)(m_Column + 'A'), (char)(m_Row + '1'));
         }
     }
 }

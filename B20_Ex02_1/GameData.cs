@@ -45,6 +45,7 @@ namespace B20_Ex02
             get => m_Height;
             set => m_Height = value;
         }
+
         public int Width
         {
             get => m_Width;

@@ -8,17 +8,22 @@ namespace B20_Ex02
 {
     internal class GameLogic
     {
+        private static Random s_Random = new Random();
+        private readonly bool r_IsPlayerVsPlayer; // !m_IsPlayerVsPlayer = PlayerVsComputer
         private GameData m_GameData;
         private bool m_SelectionNotMatching;
-        private static Random s_Random = new Random();
         private Dictionary<Cell, char> m_AiMemory;
         private Cell m_AiSelection;
         private bool m_FoundMatch;
         private BoardLetter m_FirstSelection;
         private BoardLetter m_SecondSelection;
         private bool m_IsFirstSelection;
-        private readonly bool r_IsPlayerVsPlayer; // !m_IsPlayerVsPlayer = PlayerVsComputer
         private bool m_IsGameRunning; 
+
+        public static int getRandomNumber(int i_RangeStart, int i_RangeEnd)
+        { 
+            return s_Random.Next(i_RangeStart, i_RangeEnd);
+        }
 
         public GameLogic(Player i_Player1, Player i_Player2, int i_Width, int i_Height, bool i_IsPlayerVsPlayer)
         {
@@ -141,14 +146,9 @@ namespace B20_Ex02
             get => m_GameData.Height;
         }
 
-        public static int getRandomNumber(int i_RangeStart, int i_RangeEnd)
-        { 
-            return s_Random.Next(i_RangeStart, i_RangeEnd);
-        }
-
         public string GetScoreboard()
         {
-            return String.Format(
+            return string.Format(
                 "{0}: {1} - {2}: {3}",
                 m_GameData.Player1.PlayerName,
                 m_GameData.Player1.PlayerScore,
@@ -169,7 +169,7 @@ namespace B20_Ex02
 
             m_SecondSelection.IsHidden = true;
             m_FirstSelection.IsHidden = true;
-            m_SelectionNotMatching= false;
+            m_SelectionNotMatching = false;
         }
 
         public string GetGameOverStatus()
@@ -180,7 +180,7 @@ namespace B20_Ex02
 
             if(playerOne.PlayerScore > playerTwo.PlayerScore)
             {
-                gameResult = String.Format(
+                gameResult = string.Format(
                     "{0} is the winner!{1}{2}",
                     playerOne.PlayerName,
                     System.Environment.NewLine,
@@ -188,7 +188,7 @@ namespace B20_Ex02
             }
             else if(playerOne.PlayerScore < playerTwo.PlayerScore)
             {
-                gameResult = String.Format(
+                gameResult = string.Format(
                     "{0} is the winner!{1}{2}",
                     playerTwo.PlayerName,
                     System.Environment.NewLine,
@@ -196,7 +196,7 @@ namespace B20_Ex02
             }
             else
             {
-                gameResult = String.Format(
+                gameResult = string.Format(
                     "It's a tie!{0}{1}",
                     System.Environment.NewLine,
                     GetScoreboard());
@@ -294,7 +294,7 @@ namespace B20_Ex02
                 {
                     if (Letters[i, j].IsHidden)
                     {
-                        returnValue = String.Format("{0}{1}", (j + 'A'), (i + '1'));
+                        returnValue = string.Format("{0}{1}", (char)(j + 'A'), (char)(i + '1'));
                         foundAvailableCell = true;
                     }
                 }
@@ -318,7 +318,7 @@ namespace B20_Ex02
                     {
                         if (Letters[i, j].IsHidden && !m_AiMemory.ContainsKey(new Cell(i, j)))
                         {
-                            returnValue = String.Format("{0}{1}", (char)(j + 'A'), (char)(i + '1'));
+                            returnValue = string.Format("{0}{1}", (char)(j + 'A'), (char)(i + '1'));
                             foundAvailableCell = true;
                             m_AiSelection = new Cell(i, j);
                         }

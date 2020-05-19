@@ -8,6 +8,33 @@ namespace B20_Ex02
         private Menu m_Menu;
         private GameLogic m_GameLogic;
 
+        public static int GetNumberInRange(int i_RangeStart, int i_RangeEnd)
+        {
+            Console.WriteLine("Please enter a value (must be between {0} and {1}):", i_RangeStart, i_RangeEnd);
+
+            bool isNumber = int.TryParse(Console.ReadLine(), out int userInput);
+            bool isWithinRange = false;
+
+            if (isNumber)
+            {
+                isWithinRange = userInput >= 4 && userInput <= 6;
+            }
+
+            while (!isNumber || !isWithinRange)
+            {
+                Console.WriteLine("Incorrect value");
+                Console.WriteLine("Please enter a value (must be between 4 and 6):");
+                isNumber = int.TryParse(Console.ReadLine(), out userInput);
+
+                if (isNumber)
+                {
+                    isWithinRange = userInput >= 4 && userInput <= 6;
+                }
+            }
+
+            return userInput;
+        }
+
         public GameUI()
         {
             m_Menu = new Menu();
@@ -44,7 +71,6 @@ namespace B20_Ex02
                 }
                 else
                 {
-                    
                     m_GameLogic.UpdateData(playerInput);
 
                     if(m_GameLogic.SelectionNotMatching)
@@ -96,34 +122,27 @@ namespace B20_Ex02
         {
             string playerName1, playerName2;
             int width, height;
-
             bool isPlayerVsPlayer = m_Menu.Run(out playerName1, out playerName2, out width, out height);
-
-            // initialize data 
             Player playerOne = new Player(playerName1, ePlayerTypes.Human);
-            ePlayerTypes type = (isPlayerVsPlayer) ? 
-                                    ePlayerTypes.Human 
-                                    : ePlayerTypes.CPU;
+            ePlayerTypes type = isPlayerVsPlayer ? ePlayerTypes.Human : ePlayerTypes.CPU;
             Player playerTwo = new Player(playerName2, type);
-
             m_GameLogic = new GameLogic(playerOne, playerTwo, width, height, isPlayerVsPlayer);
         }
 
-        // UI implementation
         public void DrawData()
         {
             Ex02.ConsoleUtils.Screen.Clear();
 
             int height = m_GameLogic.Letters.GetLength(0);
             int width = m_GameLogic.Letters.GetLength(1);
-
-            int amountOfEquals = width * 4 + 1;
+            int amountOfEquals = (width * 4) + 1;
             string equalLine = new string('=', amountOfEquals);
 
             Console.WriteLine(@"{0}'s turn", m_GameLogic.CurrentPlayer.PlayerName);
             Console.WriteLine(m_GameLogic.GetScoreboard());
 
             drawTopLetterRow(width);
+
             Console.WriteLine("  " + equalLine);
 
             for (int i = 0; i < height; i++)
@@ -196,19 +215,18 @@ namespace B20_Ex02
             return returnValue;
         }
 
-        private static void drawTopLetterRow(int i_LengthOfRow)
+        private void drawTopLetterRow(int i_LengthOfRow)
         {
             Console.Write(" ");
             for (int i = 0; i < i_LengthOfRow; i++)
             {
                 Console.Write("   " + (char)(i + 'A'));
-
             }
 
             Console.WriteLine();
         }
 
-        private static void drawRowAtIndex(int i_Index, BoardLetter[,] i_HidenLetterRow)
+        private void drawRowAtIndex(int i_Index, BoardLetter[,] i_HidenLetterRow)
         {
             int width = i_HidenLetterRow.GetLength(1);
 
@@ -221,6 +239,7 @@ namespace B20_Ex02
                 Console.Write(currentBoardLetter.IsHidden ? ' ' : currentBoardLetter.Letter);
                 Console.Write(" |");
             }
+
             Console.WriteLine();
         }
 
@@ -261,34 +280,6 @@ namespace B20_Ex02
             }
 
             return userInput == 'Y';
-        }
-
-        public static int GetNumberInRange(int i_RangeStart, int i_RangeEnd)
-        {
-            Console.WriteLine("Please enter a value (must be between {0} and {1}):", i_RangeStart, i_RangeEnd);
-
-            int userInput;
-            bool isNumber = int.TryParse(Console.ReadLine(), out userInput);
-            bool isWithinRange = false;
-
-            if (isNumber)
-            {
-                isWithinRange = userInput >= 4 && userInput <= 6;
-            }
-
-            while (!isNumber || !isWithinRange)
-            {
-                Console.WriteLine("Incorrect value");
-                Console.WriteLine("Please enter a value (must be between 4 and 6):");
-                isNumber = int.TryParse(Console.ReadLine(), out userInput);
-
-                if (isNumber)
-                {
-                    isWithinRange = userInput >= 4 && userInput <= 6;
-                }
-            }
-
-            return userInput;
         }
 
         public void ClearWindow()
