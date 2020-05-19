@@ -44,14 +44,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="eGameModes.cs" />
     <Compile Include="ePlayerTypes.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="BoardLetter.cs" />
-    <Compile Include="MemoryGame.cs" />
     <Compile Include="GameUI.cs" />
     <Compile Include="GameLogic.cs" />
-    <Compile Include="MainMenu.cs" />
+    <Compile Include="Menu.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="Program.cs" />

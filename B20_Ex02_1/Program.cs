@@ -6,8 +6,8 @@ namespace B20_Ex02
     {
         public static void Main(string[] i_Args)
         {
-           MemoryGame memoryGame = new MemoryGame();
-           memoryGame.StartGame();
+           GameUI gameUI =new GameUI();
+           gameUI.StartGame();
         }
     }
 }

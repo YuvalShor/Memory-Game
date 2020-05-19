@@ -1,4 +1,6 @@
-﻿namespace B20_Ex02
+﻿using System;
+
+namespace B20_Ex02
 {
     public struct Cell
     {
@@ -20,6 +22,11 @@
         {
             get => m_Column;
             set => m_Column = value;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("{0}{1}", (char)(m_Column + 'A'), (char)(m_Row + '1'));
         }
     }
 }
