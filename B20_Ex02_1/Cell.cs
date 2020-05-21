@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace B20_Ex02
+﻿namespace B20_Ex02
 {
-    public struct Cell
+    internal struct Cell
     {
         private int m_Row;
         private int m_Column;

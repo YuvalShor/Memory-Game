@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Threading;
 
 namespace B20_Ex02
 {
@@ -138,6 +136,7 @@ namespace B20_Ex02
         {
             string playerName1, playerName2;
             int width, height;
+
             eGameModes desiredGameMode = r_Menu.Run(out playerName1, out playerName2, out width, out height);
             Player playerOne = new Player(playerName1, ePlayerTypes.Human);
             ePlayerTypes type = desiredGameMode == eGameModes.PlayerVsPlayer ? ePlayerTypes.Human : ePlayerTypes.Computer;
@@ -173,10 +172,12 @@ namespace B20_Ex02
 
         private void drawTurnStatus()
         {
+            int sizeOfString = m_GameLogic.CurrentPlayer.PlayerName.Length;
+
             Console.WriteLine(
                 "{0}'{1} turn",
                 m_GameLogic.CurrentPlayer.PlayerName,
-                m_GameLogic.CurrentPlayer.PlayerName.Last() == 's' ? string.Empty : "s");
+                char.ToUpper(m_GameLogic.CurrentPlayer.PlayerName[sizeOfString - 1]) == 'S' ? string.Empty : "s");
             Console.WriteLine();
             Console.WriteLine(m_GameLogic.GetScoreboard());
             Console.WriteLine();
@@ -223,7 +224,7 @@ namespace B20_Ex02
                 char letter = i_UserCellInput[0];
                 char digit = i_UserCellInput[1];
 
-                isValidCell = checkIfLetterInRange(letter) || checkIfDigitInRange(digit);
+                isValidCell = checkIfLetterInRange(letter) && checkIfDigitInRange(digit);
             }
 
             return isValidCell;
@@ -237,7 +238,7 @@ namespace B20_Ex02
             if(i_Letter < 'A' || i_Letter > maxAllowedLetter)
             {
                 Console.WriteLine(
-                    "First character of input must be a character between A-{0}",
+                    "Invalid input, first character must be a character between A-{0}",
                     maxAllowedLetter);
                 isValidLetter = false;
             }
@@ -253,7 +254,7 @@ namespace B20_Ex02
             if(i_Digit < '1' || i_Digit > maxAllowedDigit)
             {
                 Console.WriteLine(
-                    "Second character of input must be a digit between 1-{0}",
+                    "Invalid input, second character must be a digit between 1-{0}",
                     maxAllowedDigit);
                 isValidDigit = false;
             }
@@ -313,14 +314,9 @@ namespace B20_Ex02
             {
                 userInput = getSquareToReveal();
                 isValidInput = validateUserSquareSelection(userInput);
-
-                if(!isValidInput)
-                {
-                    Console.WriteLine("Invalid input");
-                }
             }
 
-            return userInput;
+            return userInput.ToUpper();
         }
 
         private string getSquareToReveal()
