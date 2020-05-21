@@ -1,34 +1,33 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 
 namespace B20_Ex02
 {
     internal class GameUI
     {
-        private Menu m_Menu;
+        private readonly Menu r_Menu;
         private GameLogic m_GameLogic;
 
         public static int GetNumberInRange(int i_RangeStart, int i_RangeEnd)
         {
-            Console.WriteLine("Please enter a value (must be between {0} and {1}):", i_RangeStart, i_RangeEnd);
-
-            bool isNumber = int.TryParse(Console.ReadLine(), out int userInput);
+            int userInput = i_RangeStart;
+            bool isNumber = false;
             bool isWithinRange = false;
-
-            if (isNumber)
-            {
-                isWithinRange = userInput >= 4 && userInput <= 6;
-            }
 
             while (!isNumber || !isWithinRange)
             {
-                Console.WriteLine("Incorrect value");
-                Console.WriteLine("Please enter a value (must be between 4 and 6):");
+                Console.WriteLine("Please enter a value (must be between {0} and {1}):", i_RangeStart, i_RangeEnd);
                 isNumber = int.TryParse(Console.ReadLine(), out userInput);
 
                 if (isNumber)
                 {
-                    isWithinRange = userInput >= 4 && userInput <= 6;
+                    isWithinRange = userInput >= i_RangeStart && userInput <= i_RangeEnd;
+                }
+                
+                if(!isNumber || !isWithinRange)
+                {
+                    Console.WriteLine("Incorrect value");
                 }
             }
 
@@ -37,54 +36,72 @@ namespace B20_Ex02
 
         public GameUI()
         {
-            m_Menu = new Menu();
+            r_Menu = new Menu();
         }
 
         public void StartGame()
         {
-            runMenu();
+            if(GameLogic.CurrentGameState == eGameStates.Menu)
+            {
+                runMenu();
+            }
+
             runGame();
             gameOver();
         }
 
         private void runGame()
         {
-            while(m_GameLogic.IsGameRunning)
+            while(GameLogic.CurrentGameState != eGameStates.GameOver)
             {
-                string playerInput;
-
                 DrawData();
-
-                if (m_GameLogic.CurrentPlayer.Type == ePlayerTypes.Human)
-                {
-                    playerInput = GetPlayerInput(m_GameLogic.Letters);
-                }
-                else
-                {
-                    System.Threading.Thread.Sleep(2000);
-                    playerInput = m_GameLogic.CalculateAiInput();
-                }
-
-                if(playerInput == "Q")
-                {
-                    StopGame();
-                }
-                else
-                {
-                    m_GameLogic.UpdateData(playerInput);
-
-                    if(m_GameLogic.SelectionNotMatching)
-                    {
-                        DrawData();
-                        m_GameLogic.TogglePlayer();
-                    }
-                }
+                string playerInput = getPlayerInput();
+                sendInputAndUpdateUI(playerInput);
             }
-
-            DrawData();
         }
 
-        private void StopGame()
+        private string getPlayerInput()
+        {
+            string playerInput;
+
+            if (m_GameLogic.CurrentPlayer.Type == ePlayerTypes.Human)
+            {
+                playerInput = GetHumanInput();
+            }
+            else
+            {
+                playerInput = m_GameLogic.CalculateAiInput().ToString();
+
+                DrawText(
+                    m_GameLogic.AiHasMatches
+                        ? "Computer has got something in memory..."
+                        : "Computer is guessing...");
+
+                System.Threading.Thread.Sleep(3000);
+            }
+
+            return playerInput;
+        }
+
+        private void sendInputAndUpdateUI(string i_PlayerInput)
+        {
+            if(i_PlayerInput == "Q")
+            {
+                stopGame();
+            }
+            else
+            {
+                m_GameLogic.UpdateData(Cell.Parse(i_PlayerInput));
+
+                if(m_GameLogic.SelectionNotMatching)
+                {
+                    DrawData();
+                    m_GameLogic.TogglePlayer();
+                }
+            }
+        }
+
+        private void stopGame()
         {
             DrawText("Goodbye!");
             System.Threading.Thread.Sleep(2000);
@@ -93,6 +110,8 @@ namespace B20_Ex02
 
         private void gameOver()
         {
+            DrawData();
+
             DrawText(m_GameLogic.GetGameOverStatus());
 
             bool restartNeeded = CheckRestart();
@@ -100,20 +119,17 @@ namespace B20_Ex02
             if (restartNeeded)
             {
                 ClearWindow();
-                RestartGame();
+                restartGame();
             }
             else
             {
-                StopGame();
+                stopGame();
             }
         }
 
-        private void RestartGame()
+        private void restartGame()
         {
-            int height;
-            int width;
-
-            m_Menu.GetBoardSize(out height, out width);
+            r_Menu.GetBoardSize(out int height, out int width);
             m_GameLogic.ResetRound(height, width);
             StartGame();
         }
@@ -122,34 +138,31 @@ namespace B20_Ex02
         {
             string playerName1, playerName2;
             int width, height;
-            bool isPlayerVsPlayer = m_Menu.Run(out playerName1, out playerName2, out width, out height);
+            eGameModes desiredGameMode = r_Menu.Run(out playerName1, out playerName2, out width, out height);
             Player playerOne = new Player(playerName1, ePlayerTypes.Human);
-            ePlayerTypes type = isPlayerVsPlayer ? ePlayerTypes.Human : ePlayerTypes.CPU;
+            ePlayerTypes type = desiredGameMode == eGameModes.PlayerVsPlayer ? ePlayerTypes.Human : ePlayerTypes.Computer;
             Player playerTwo = new Player(playerName2, type);
-            m_GameLogic = new GameLogic(playerOne, playerTwo, width, height, isPlayerVsPlayer);
+            
+            m_GameLogic = new GameLogic(playerOne, playerTwo, width, height, desiredGameMode);
         }
 
         public void DrawData()
         {
-            Ex02.ConsoleUtils.Screen.Clear();
+            int amountOfEqualSigns = (m_GameLogic.Width * 4) + 1;
+            string equalLine = new string('=', amountOfEqualSigns);
 
-            int height = m_GameLogic.Letters.GetLength(0);
-            int width = m_GameLogic.Letters.GetLength(1);
-            int amountOfEquals = (width * 4) + 1;
-            string equalLine = new string('=', amountOfEquals);
-
-            Console.WriteLine(@"{0}'s turn", m_GameLogic.CurrentPlayer.PlayerName);
-            Console.WriteLine(m_GameLogic.GetScoreboard());
-
-            drawTopLetterRow(width);
-
+            ClearWindow();
+            drawTurnStatus();
+            drawTopLetterRow(m_GameLogic.Width);
             Console.WriteLine("  " + equalLine);
 
-            for (int i = 0; i < height; i++)
+            for (int i = 0; i < m_GameLogic.Height; i++)
             {
                 drawRowAtIndex(i, m_GameLogic.Letters);
                 Console.WriteLine("  " + equalLine);
             }
+
+            Console.WriteLine();
 
             if(m_GameLogic.SelectionNotMatching)
             {
@@ -158,61 +171,109 @@ namespace B20_Ex02
             }
         }
 
-        private bool validateInput(BoardLetter[,] i_Letters, string i_UserInput)
+        private void drawTurnStatus()
         {
-            bool returnValue = true;
-            int width = i_Letters.GetLength(1);
-            int height = i_Letters.GetLength(0);
-            char maxAllowedLetter = (char)('A' + width - 1);
-            char maxAllowedDigit = (char)('0' + height);
+            Console.WriteLine(
+                "{0}'{1} turn",
+                m_GameLogic.CurrentPlayer.PlayerName,
+                m_GameLogic.CurrentPlayer.PlayerName.Last() == 's' ? string.Empty : "s");
+            Console.WriteLine();
+            Console.WriteLine(m_GameLogic.GetScoreboard());
+            Console.WriteLine();
+        }
 
-            if(i_UserInput != "Q")
+        private bool validateUserSquareSelection(string i_UserInput)
+        {
+            bool isValidInput = true;
+            
+            if(i_UserInput != null)
             {
-                if(i_UserInput == null)
-                {
-                    Console.WriteLine("Input must not be empty");
-                    returnValue = false;
-                }
-                else if(i_UserInput.Length != 2)
-                {
-                    Console.WriteLine("Input must have exactly 2 characters");
-                    returnValue = false;
-                }
-                else
-                {
-                    char letter = i_UserInput[0];
-                    char digit = i_UserInput[1];
+                i_UserInput = i_UserInput.ToUpper();
 
-                    if(letter < 'A' || letter > maxAllowedLetter)
+                if(i_UserInput != "Q")
+                {
+                    isValidInput = validateCellInputSelection(i_UserInput);
+
+                    if(isValidInput)
                     {
-                        Console.WriteLine(
-                            "First character of input must be a character between A-{0}",
-                            maxAllowedLetter);
-                        returnValue = false;
-                    }
-
-                    if(digit < '1' || digit > maxAllowedDigit)
-                    {
-                        Console.WriteLine("Second character of input must be a digit between 1-{0}", maxAllowedDigit);
-                        returnValue = false;
-                    }
-                }
-
-                if(returnValue)
-                {
-                    int column = i_UserInput[0] - 'A';
-                    int row = i_UserInput[1] - '1';
-
-                    returnValue = i_Letters[row, column].IsHidden;
-
-                    if(!returnValue)
-                    {
-                        Console.WriteLine("Square already revealed");
+                        isValidInput = checkSquareNotAlreadyRevealed(i_UserInput);
                     }
                 }
             }
+            else
+            {
+                Console.WriteLine("Input must not be empty");
+                isValidInput = false;
+            }
 
-            return returnValue;
+            return isValidInput;
+        }
+
+        private bool validateCellInputSelection(string i_UserCellInput)
+        {
+            bool isValidCell;
+
+            if(i_UserCellInput.Length != 2)
+            {
+                Console.WriteLine("Input must have exactly 2 characters");
+                isValidCell = false;
+            }
+            else
+            {
+                char letter = i_UserCellInput[0];
+                char digit = i_UserCellInput[1];
+
+                isValidCell = checkIfLetterInRange(letter) || checkIfDigitInRange(digit);
+            }
+
+            return isValidCell;
+        }
+
+        private bool checkIfLetterInRange(char i_Letter)
+        {
+            char maxAllowedLetter = (char)('A' + m_GameLogic.Width - 1);
+            bool isValidLetter = true;
+
+            if(i_Letter < 'A' || i_Letter > maxAllowedLetter)
+            {
+                Console.WriteLine(
+                    "First character of input must be a character between A-{0}",
+                    maxAllowedLetter);
+                isValidLetter = false;
+            }
+
+            return isValidLetter;
+        }
+
+        private bool checkIfDigitInRange(char i_Digit)
+        {
+            char maxAllowedDigit = (char)('0' + m_GameLogic.Height);
+            bool isValidDigit = true;
+
+            if(i_Digit < '1' || i_Digit > maxAllowedDigit)
+            {
+                Console.WriteLine(
+                    "Second character of input must be a digit between 1-{0}",
+                    maxAllowedDigit);
+                isValidDigit = false;
+            }
+
+            return isValidDigit;
+        }
+
+        private bool checkSquareNotAlreadyRevealed(string i_UserInput)
+        {
+            int column = i_UserInput[0] - 'A';
+            int row = i_UserInput[1] - '1';
+
+            bool isValidInput = m_GameLogic.Letters[row, column].IsHidden;
+
+            if(!isValidInput)
+            {
+                Console.WriteLine("Square already revealed");
+            }
+
+            return isValidInput;
         }
 
         private void drawTopLetterRow(int i_LengthOfRow)
@@ -226,14 +287,14 @@ namespace B20_Ex02
             Console.WriteLine();
         }
 
-        private void drawRowAtIndex(int i_Index, BoardLetter[,] i_HidenLetterRow)
+        private void drawRowAtIndex(int i_Index, BoardLetter[,] i_BoardLetterRow)
         {
-            int width = i_HidenLetterRow.GetLength(1);
+            int width = i_BoardLetterRow.GetLength(1);
 
             Console.Write((i_Index + 1) + " |");
             for (int j = 0; j < width; j++)
             {
-                BoardLetter currentBoardLetter = i_HidenLetterRow[i_Index, j];
+                BoardLetter currentBoardLetter = i_BoardLetterRow[i_Index, j];
 
                 Console.Write(" ");
                 Console.Write(currentBoardLetter.IsHidden ? ' ' : currentBoardLetter.Letter);
@@ -243,23 +304,34 @@ namespace B20_Ex02
             Console.WriteLine();
         }
 
-        public string GetPlayerInput(BoardLetter[,] i_Letters)
+        public string GetHumanInput()
         {
-            Console.WriteLine("Please choose the next square: ");
-            string userInput = Console.ReadLine();
+            string userInput = string.Empty;
+            bool isValidInput = false;
 
-            while(!validateInput(i_Letters, userInput))
+            while(!isValidInput)
             {
-                Console.WriteLine("Please choose the next square: ");
-                userInput = Console.ReadLine();
+                userInput = getSquareToReveal();
+                isValidInput = validateUserSquareSelection(userInput);
+
+                if(!isValidInput)
+                {
+                    Console.WriteLine("Invalid input");
+                }
             }
 
             return userInput;
         }
 
-        public void DrawText(string i_GameOverStatus)
+        private string getSquareToReveal()
         {
-            Console.WriteLine(i_GameOverStatus);
+            Console.WriteLine("{0}, please choose a square to reveal:", m_GameLogic.CurrentPlayer.PlayerName);
+            return Console.ReadLine();
+        }
+
+        public void DrawText(string i_TextToDraw)
+        {
+            Console.WriteLine(i_TextToDraw);
         }
 
         public bool CheckRestart()
@@ -267,7 +339,7 @@ namespace B20_Ex02
             Console.WriteLine();
             Console.WriteLine("Another round? (Y/N)");
 
-            char userInput; 
+            char userInput;
             bool isValid = char.TryParse(Console.ReadLine(), out userInput);
 
             while(!isValid)
@@ -275,11 +347,11 @@ namespace B20_Ex02
                 Console.WriteLine("Invalid input, please enter Y/N");
                 Console.WriteLine("Another round? (Y/N)");
                 isValid = char.TryParse(Console.ReadLine(), out userInput);
-
+                userInput = char.ToUpper(userInput);
                 isValid = userInput == 'Y' || userInput == 'N';
             }
 
-            return userInput == 'Y';
+            return char.ToUpper(userInput) == 'Y';
         }
 
         public void ClearWindow()

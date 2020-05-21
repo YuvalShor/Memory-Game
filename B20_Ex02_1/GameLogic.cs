@@ -8,67 +8,131 @@ namespace B20_Ex02
 {
     internal class GameLogic
     {
+        private const int k_DifficultyOdds = 80;
+        private static eGameStates s_CurrentGameState = eGameStates.Menu;
         private static Random s_Random = new Random();
-        private readonly bool r_IsPlayerVsPlayer; // !m_IsPlayerVsPlayer = PlayerVsComputer
+        private readonly eGameModes r_GameMode;
         private GameData m_GameData;
-        private bool m_SelectionNotMatching;
         private Dictionary<Cell, char> m_AiMemory;
         private Cell m_AiSelection;
-        private bool m_FoundMatch;
         private BoardLetter m_FirstSelection;
         private BoardLetter m_SecondSelection;
+        private bool m_FoundMatch;
         private bool m_IsFirstSelection;
-        private bool m_IsGameRunning; 
+        private bool m_SelectionNotMatching;
+        private bool m_AiHasMatches;
 
-        public static int getRandomNumber(int i_RangeStart, int i_RangeEnd)
+        public static int GetRandomNumber(int i_RangeStart, int i_RangeEnd)
         { 
             return s_Random.Next(i_RangeStart, i_RangeEnd);
         }
 
-        public GameLogic(Player i_Player1, Player i_Player2, int i_Width, int i_Height, bool i_IsPlayerVsPlayer)
+        public GameLogic(Player i_Player1, Player i_Player2, int i_Width, int i_Height, eGameModes i_GameMode)
         {
             m_GameData = new GameData(i_Player1, i_Player2, i_Width, i_Height);
-            m_GameData.InitializeMatrix();
-            r_IsPlayerVsPlayer = i_IsPlayerVsPlayer;
+            m_GameData.InitializeBoardMatrix();
+            r_GameMode = i_GameMode;
             m_SelectionNotMatching = false;
             m_IsFirstSelection = true;
-            m_IsGameRunning = true;
+            s_CurrentGameState = eGameStates.Running;
             m_FoundMatch = false;
 
-            if(!r_IsPlayerVsPlayer)
+            if(r_GameMode == eGameModes.PlayerVsComputer)
             {
                 m_AiMemory = new Dictionary<Cell, char>();
             }
         }
 
+        public static eGameStates CurrentGameState
+        {
+            get
+            {
+                return s_CurrentGameState;
+            }
+
+            set
+            {
+                s_CurrentGameState = value;
+            }
+        }
+
         public Player CurrentPlayer
         {
-            get => m_GameData.CurrentPlayer;
-            set => m_GameData.CurrentPlayer = value;
+            get
+            {
+                return m_GameData.CurrentPlayer;
+            }
+
+            set
+            {
+                m_GameData.CurrentPlayer = value;
+            }
         }
 
         public BoardLetter[,] Letters
         {
-            get => m_GameData.Letters;
+            get
+            {
+                return m_GameData.Letters;
+            }
         }
 
-        public void UpdateData(string i_UserInput)
+        public bool AiHasMatches
         {
-            int column = i_UserInput[0] - 'A';
-            int row = i_UserInput[1] - '1';
+            get
+            {
+                return m_AiHasMatches;
+            }
 
+            set
+            {
+                m_AiHasMatches = value;
+            }
+        }
+
+        public bool SelectionNotMatching
+        {
+            get
+            {
+                return m_SelectionNotMatching;
+            }
+
+            set
+            {
+                m_SelectionNotMatching = value;
+            }
+        }
+
+        public int Width
+        {
+            get
+            {
+                return m_GameData.Width;
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                return m_GameData.Height;
+            }
+        }
+
+        public void UpdateData(Cell i_UserSelection)
+        {
             if(!m_SelectionNotMatching)
             {
-                UpdateNextTurn(row, column);
+                updateNextTurn(i_UserSelection);
             }
 
-            if ((m_GameData.Player1.PlayerScore + m_GameData.Player2.PlayerScore) == (Width * Height) / 2)
+            if ((m_GameData.PlayerOne.PlayerScore + m_GameData.PlayerTwo.PlayerScore) == (Width * Height) / 2)
             {
-                m_IsGameRunning = false;
+                s_CurrentGameState = eGameStates.GameOver;
             }
         }
 
-        private void AddToAiMemory(Cell i_CellToBeAdded)
+        private void addToAiMemory(Cell i_CellToBeAdded)
         {
             if(!m_AiMemory.ContainsKey(i_CellToBeAdded))
             {
@@ -76,18 +140,16 @@ namespace B20_Ex02
             }
         }
 
-        private void UpdatePlayerVsComputer(string i_UserInput)
+        private void updateNextTurn(Cell i_UserSelection)
         {
-            // implement please
-        }
+            m_SecondSelection = m_GameData.Letters[i_UserSelection.Row, i_UserSelection.Column];
 
-        private void UpdateNextTurn(int i_Row, int i_Column)
-        {
-            m_SecondSelection = m_GameData.Letters[i_Row, i_Column];
-
-            if(!r_IsPlayerVsPlayer)
+            if(r_GameMode == eGameModes.PlayerVsComputer)
             {
-                AddToAiMemory(new Cell(i_Row, i_Column));
+                if(GameLogic.GetRandomNumber(0, 100) < k_DifficultyOdds)
+                {
+                    addToAiMemory(i_UserSelection);
+                }
             }
 
             if (m_IsFirstSelection)
@@ -106,9 +168,9 @@ namespace B20_Ex02
                 }
                 else
                 {
-                    if (!r_IsPlayerVsPlayer)
+                    if (r_GameMode == eGameModes.PlayerVsComputer)
                     { 
-                        RemoveLetterFromAiMemory(m_SecondSelection.Letter);
+                        removeLetterFromAiMemory(m_SecondSelection.Letter);
                     }
 
                     CurrentPlayer.PlayerScore++;
@@ -118,7 +180,7 @@ namespace B20_Ex02
             }
         }
 
-        private void RemoveLetterFromAiMemory(char i_SecondSelectionLetter)
+        private void removeLetterFromAiMemory(char i_SecondSelectionLetter)
         {
             foreach(var memorizedLetter in m_AiMemory)
             {
@@ -130,41 +192,25 @@ namespace B20_Ex02
             }
         }
 
-        public bool SelectionNotMatching
-        {
-            get => m_SelectionNotMatching;
-            set => m_SelectionNotMatching = value;
-        }
-
-        public int Width
-        {
-            get => m_GameData.Width;
-        }
-
-        public int Height
-        {
-            get => m_GameData.Height;
-        }
-
         public string GetScoreboard()
         {
             return string.Format(
-                "{0}: {1} - {2}: {3}",
-                m_GameData.Player1.PlayerName,
-                m_GameData.Player1.PlayerScore,
-                m_GameData.Player2.PlayerName,
-                m_GameData.Player2.PlayerScore);
+                "Score: {0} {1} - {2} {3}",
+                m_GameData.PlayerOne.PlayerName,
+                m_GameData.PlayerOne.PlayerScore,
+                m_GameData.PlayerTwo.PlayerName,
+                m_GameData.PlayerTwo.PlayerScore);
         }
 
         public void TogglePlayer()
         {
-            if(m_GameData.CurrentPlayer == m_GameData.Player1)
+            if(m_GameData.CurrentPlayer == m_GameData.PlayerOne)
             {
-                m_GameData.CurrentPlayer = m_GameData.Player2;
+                m_GameData.CurrentPlayer = m_GameData.PlayerTwo;
             }
             else
             {
-                m_GameData.CurrentPlayer = m_GameData.Player1;
+                m_GameData.CurrentPlayer = m_GameData.PlayerOne;
             }
 
             m_SecondSelection.IsHidden = true;
@@ -174,162 +220,178 @@ namespace B20_Ex02
 
         public string GetGameOverStatus()
         {
-            Player playerOne = m_GameData.Player1;
-            Player playerTwo = m_GameData.Player2;
+            Player playerOne = m_GameData.PlayerOne;
+            Player playerTwo = m_GameData.PlayerTwo;
             string gameResult = null;
 
             if(playerOne.PlayerScore > playerTwo.PlayerScore)
             {
-                gameResult = string.Format(
-                    "{0} is the winner!{1}{2}",
-                    playerOne.PlayerName,
-                    System.Environment.NewLine,
-                    GetScoreboard());
+                gameResult = getGameResultText(playerOne.PlayerName);
             }
             else if(playerOne.PlayerScore < playerTwo.PlayerScore)
             {
-                gameResult = string.Format(
-                    "{0} is the winner!{1}{2}",
-                    playerTwo.PlayerName,
-                    System.Environment.NewLine,
-                    GetScoreboard());
+                gameResult = getGameResultText(playerTwo.PlayerName);
             }
             else
             {
-                gameResult = string.Format(
-                    "It's a tie!{0}{1}",
-                    System.Environment.NewLine,
-                    GetScoreboard());
+                gameResult = getGameResultText(null);
             }
 
             return gameResult;
         }
 
+        private string getGameResultText(string i_PlayerName)
+        {
+            string gameResultText = null;
+
+            if(i_PlayerName != null)
+            {
+                gameResultText = string.Format(
+                    "{0} is the winner!{1}{2}",
+                    i_PlayerName,
+                    System.Environment.NewLine,
+                    GetScoreboard(),
+                    System.Environment.NewLine);
+            }
+            else
+            {
+                gameResultText = string.Format(
+                    "It's a tie!{0}{1}",
+                    System.Environment.NewLine,
+                    GetScoreboard());
+            }
+
+            return gameResultText;
+        }
+
         public void ResetRound(int i_Height, int i_Width)
         {
-            m_GameData.Player1.PlayerScore = 0;
-            m_GameData.Player2.PlayerScore = 0;
+            CurrentPlayer = m_GameData.PlayerOne.PlayerScore < m_GameData.PlayerTwo.PlayerScore
+                                ? m_GameData.PlayerOne
+                                : m_GameData.PlayerTwo;
+            m_GameData.PlayerOne.PlayerScore = 0;
+            m_GameData.PlayerTwo.PlayerScore = 0;
 
             m_GameData.Height = i_Height;
             m_GameData.Width = i_Width;
             m_GameData.Letters = new BoardLetter[i_Height, i_Width];
 
-            m_GameData.InitializeMatrix();
+            m_GameData.InitializeBoardMatrix();
 
-            m_IsGameRunning = true;
-        }
-
-        public bool IsGameRunning
-        {
-            get => m_IsGameRunning;
-            set => m_IsGameRunning = value;
+            s_CurrentGameState = eGameStates.Running;
         }
 
         public string CalculateAiInput()
         {
-            string returnValue = null;
+            string aiSelection = null;
 
             if(m_AiMemory.Count == 0)
             {
-                returnValue = findFirstHiddenCell();
+                m_AiHasMatches = false;
+                aiSelection = getRandomUnmemorizedSquare();
             }
             else
             {
-                if(m_IsFirstSelection)
-                {
-                    m_FoundMatch = findLetterMatch(ref returnValue);
+                aiSelection = m_IsFirstSelection ?
+                                  calculateFirstSelection() :
+                                  calculateSecondSelection();
+            }
 
-                    if(!m_FoundMatch)
-                    {
-                        returnValue = findFirstUnmemorizedCell();
-                    }
+            return aiSelection;
+        }
+
+        private string calculateFirstSelection()
+        {
+            string firstSelection = null;
+
+            m_FoundMatch = findLetterMatch(ref firstSelection);
+
+            if(m_FoundMatch)
+            {
+                m_AiHasMatches = true;
+            }
+            else
+            {
+                m_AiHasMatches = false;
+                firstSelection = getRandomUnmemorizedSquare();
+            }
+
+            return firstSelection;
+        }
+
+        private string calculateSecondSelection()
+        {
+            string secondSelection = null;
+
+            if(m_FoundMatch)
+            {
+                secondSelection = m_AiSelection.ToString();
+            }
+            else
+            {
+                secondSelection = findLetterInMemory(m_AiSelection);
+
+                if(secondSelection != null)
+                {
+                    m_AiHasMatches = true;
                 }
                 else
                 {
-                    if(m_FoundMatch)
-                    {
-                        returnValue = m_AiSelection.ToString();
-                    }
-                    else
-                    {
-                        returnValue = findLetterInMemory(m_AiSelection);
-
-                        if(returnValue == null)
-                        {
-                            returnValue = findFirstUnmemorizedCell();
-                        }
-                    }
+                    m_AiHasMatches = false;
+                    secondSelection = getRandomUnmemorizedSquare();
                 }
             }
 
-            return returnValue;
+            return secondSelection;
         }
 
         private string findLetterInMemory(Cell i_FirstSelectionCell)
         {
-            string returnValue = null;
+            string foundLetter = null;
 
             foreach(var memorizedLetter in m_AiMemory)
             {
-                if(!memorizedLetter.Key.Equals(i_FirstSelectionCell) && memorizedLetter.Value
-                   == Letters[i_FirstSelectionCell.Row, i_FirstSelectionCell.Column].Letter) 
+                Cell currentKey = memorizedLetter.Key;
+                char firstSelectionLetter = Letters[i_FirstSelectionCell.Row, i_FirstSelectionCell.Column].Letter;
+
+                if(!currentKey.Equals(i_FirstSelectionCell) && memorizedLetter.Value
+                   == firstSelectionLetter) 
                 {
-                    returnValue = memorizedLetter.Key.ToString();
+                    foundLetter = memorizedLetter.Key.ToString();
                 }
             }
 
-            return returnValue;
+            return foundLetter;
         }
 
-        private string findFirstHiddenCell()
+        private string getRandomUnmemorizedSquare()
         {
-            string returnValue = null;
             int row = Letters.GetLength(0);
             int column = Letters.GetLength(1);
-            bool foundAvailableCell = false;
+            Cell[] cellsNotInMemory = new Cell[(Height * Width) - m_AiMemory.Count];
+            int indexOfCellNotInMemory = 0;
 
-            for (int i = 0; i < row && !foundAvailableCell; i++)
+            for (int i = 0; i < row; i++)
             {
-                for (int j = 0; j < column && !foundAvailableCell; j++)
+                for(int j = 0; j < column; j++)
                 {
-                    if (Letters[i, j].IsHidden)
+                    if(Letters[i, j].IsHidden)
                     {
-                        returnValue = string.Format("{0}{1}", (char)(j + 'A'), (char)(i + '1'));
-                        foundAvailableCell = true;
-                    }
-                }
-            }
-
-            return returnValue;
-        }
-
-        private string findFirstUnmemorizedCell()
-        {
-            string returnValue = null;
-            int row = Letters.GetLength(0);
-            int column = Letters.GetLength(1);
-            bool foundAvailableCell = false;
-
-            for (int i = 0; i < row && !foundAvailableCell; i++)
-            {
-                for (int j = 0; j < column && !foundAvailableCell; j++)
-                {
-                    if (Letters[i, j].IsHidden)
-                    {
-                        if (Letters[i, j].IsHidden && !m_AiMemory.ContainsKey(new Cell(i, j)))
+                        if(!m_AiMemory.ContainsKey(new Cell(i, j)))
                         {
-                            returnValue = string.Format("{0}{1}", (char)(j + 'A'), (char)(i + '1'));
-                            foundAvailableCell = true;
-                            m_AiSelection = new Cell(i, j);
+                            cellsNotInMemory[indexOfCellNotInMemory++] = new Cell(i, j);
                         }
                     }
                 }
             }
 
-            return returnValue;
+            indexOfCellNotInMemory = GetRandomNumber(0, indexOfCellNotInMemory);
+            m_AiSelection = cellsNotInMemory[indexOfCellNotInMemory];
+
+            return m_AiSelection.ToString();
         }
 
-        private bool findLetterMatch(ref string i_ReturnValue)
+        private bool findLetterMatch(ref string i_MemorizedMatchingLetter)
         {
             bool foundMatch = false;
 
@@ -341,7 +403,7 @@ namespace B20_Ex02
                     {
                         if (firstMemorizedLetter.Value == secondMemorizedLetter.Value)
                         {
-                            i_ReturnValue = firstMemorizedLetter.Key.ToString();
+                            i_MemorizedMatchingLetter = firstMemorizedLetter.Key.ToString();
                             m_AiSelection = secondMemorizedLetter.Key;
                             foundMatch = true;
                         }

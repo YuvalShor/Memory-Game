@@ -17,20 +17,41 @@ namespace B20_Ex02
 
         public string PlayerName
         {
-            get => m_PlayerName;
-            set => m_PlayerName = value;
+            get
+            {
+                return m_PlayerName;
+            }
+
+            set
+            {
+                m_PlayerName = value;
+            }
         }
 
         public int PlayerScore
         {
-            get => m_PlayerScore;
-            set => m_PlayerScore = value;
+            get
+            {
+                return m_PlayerScore;
+            }
+
+            set
+            {
+                m_PlayerScore = value;
+            }
         }
 
         public ePlayerTypes Type
         {
-            get => m_Type;
-            set => m_Type = value;
+            get
+            {
+                return m_Type;
+            }
+
+            set
+            {
+                m_Type = value;
+            }
         }
     }
 }

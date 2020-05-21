@@ -7,6 +7,14 @@ namespace B20_Ex02
         private int m_Row;
         private int m_Column;
 
+        public static Cell Parse(string i_ToParse)
+        {
+            int column = i_ToParse[0] - 'A';
+            int row = i_ToParse[1] - '1';
+
+            return new Cell(row, column);
+        }
+
         public Cell(int i_Row, int i_Column)
         {
             m_Row = i_Row;
@@ -15,14 +23,28 @@ namespace B20_Ex02
 
         public int Row
         {
-            get => m_Row;
-            set => m_Row = value;
+            get
+            {
+                return m_Row;
+            }
+
+            set
+            {
+                m_Row = value;
+            }
         }
 
         public int Column
         {
-            get => m_Column;
-            set => m_Column = value;
+            get
+            {
+                return m_Column;
+            }
+
+            set
+            {
+                m_Column = value;
+            }
         }
 
         public override string ToString()

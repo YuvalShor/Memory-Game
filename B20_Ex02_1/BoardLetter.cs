@@ -19,14 +19,28 @@ namespace B20_Ex02
 
         public char Letter
         {
-            get => m_Letter;
-            set => m_Letter = value;
+            get
+            {
+                return m_Letter;
+            }
+
+            set
+            {
+                m_Letter = value;
+            }
         }
 
         public bool IsHidden
         {
-            get => m_IsHidden;
-            set => m_IsHidden = value;
+            get
+            {
+                return m_IsHidden;
+            }
+
+            set
+            {
+                m_IsHidden = value;
+            }
         }
     }
 }

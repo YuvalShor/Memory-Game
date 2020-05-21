@@ -10,92 +10,139 @@ namespace B20_Ex02
 {
     internal class GameData
     {
-        private Player m_Player1;
-        private Player m_Player2;
+        private Player m_PlayerOne;
+        private Player m_PlayerTwo;
         private Player m_CurrentPlayer;
         private BoardLetter[,] m_Letters;
         private int m_Height;
         private int m_Width;
 
-        public GameData(Player i_Player1, Player i_Player2, int i_Width, int i_Height)
+        public GameData(Player i_PlayerOne, Player i_PlayerTwo, int i_Width, int i_Height)
         {
-            m_Player1 = i_Player1;
-            m_Player2 = i_Player2;
+            m_PlayerOne = i_PlayerOne;
+            m_PlayerTwo = i_PlayerTwo;
             m_Width = i_Width;
             m_Height = i_Height;
 
-            m_CurrentPlayer = m_Player1;
+            m_CurrentPlayer = m_PlayerOne;
             m_Letters = new BoardLetter[Height, Width];
         }
 
         public BoardLetter[,] Letters
         {
-            get => m_Letters;
-            set => m_Letters = value;
+            get
+            {
+                return m_Letters;
+            }
+
+            set
+            {
+                m_Letters = value;
+            }
         }
 
         public Player CurrentPlayer
         {
-            get => m_CurrentPlayer;
-            set => m_CurrentPlayer = value;
+            get
+            {
+                return m_CurrentPlayer;
+            }
+
+            set
+            {
+                m_CurrentPlayer = value;
+            }
         }
 
         public int Height
         {
-            get => m_Height;
-            set => m_Height = value;
+            get
+            {
+                return m_Height;
+            }
+
+            set
+            {
+                m_Height = value;
+            }
         }
 
         public int Width
         {
-            get => m_Width;
-            set => m_Width = value;
+            get
+            {
+                return m_Width;
+            }
+
+            set
+            {
+                m_Width = value;
+            }
         }
 
-        public void InitializeMatrix()
+        public Player PlayerOne
         {
-            char[] letters = new char[m_Height * m_Width / 2];
-
-            for(int i = 0; i < letters.Length; i++)
+            get
             {
-                letters[i] = (char)('A' + i);
+                return m_PlayerOne;
             }
+        }
 
-            List<Cell> randomPoints = new List<Cell>(m_Height * m_Width);
-
-            for(int i = 0; i < m_Height; i++)
+        public Player PlayerTwo
+        {
+            get
             {
-                for(int j = 0; j < m_Width; j++)
-                {
-                    randomPoints.Add(new Cell(i, j));
-                }
+                return m_PlayerTwo;
             }
+        }
 
-            foreach(char letter in letters)
+        public void InitializeBoardMatrix()
+        {
+            char[] boardLetters = initializeBoardLetters();
+            List<Cell> randomCells = getRandomCellsList();
+
+            foreach(char letter in boardLetters)
             {
-                int randomSelection = GameLogic.getRandomNumber(0, randomPoints.Count);
-                Cell firstCell = randomPoints[randomSelection];
+                int randomSelection = GameLogic.GetRandomNumber(0, randomCells.Count);
+                Cell firstCell = randomCells[randomSelection];
 
-                randomPoints.Remove(firstCell);
-                randomSelection = GameLogic.getRandomNumber(0, randomPoints.Count);
+                randomCells.Remove(firstCell);
+                randomSelection = GameLogic.GetRandomNumber(0, randomCells.Count);
 
-                Cell secondCell = randomPoints[randomSelection];
+                Cell secondCell = randomCells[randomSelection];
 
-                randomPoints.Remove(secondCell);
+                randomCells.Remove(secondCell);
 
                 Letters[firstCell.Row, firstCell.Column] = new BoardLetter(letter, true);
                 Letters[secondCell.Row, secondCell.Column] = new BoardLetter(letter, true);
             }
         }
 
-        public Player Player1
+        private List<Cell> getRandomCellsList()
         {
-            get => m_Player1;
+            List<Cell> randomCells = new List<Cell>(m_Height * m_Width);
+
+            for(int i = 0; i < m_Height; i++)
+            {
+                for(int j = 0; j < m_Width; j++)
+                {
+                    randomCells.Add(new Cell(i, j));
+                }
+            }
+
+            return randomCells;
         }
 
-        public Player Player2
+        private char[] initializeBoardLetters()
         {
-            get => m_Player2;
+            char[] boardLetters = new char[m_Height * m_Width / 2];
+
+            for(int i = 0; i < boardLetters.Length; i++)
+            {
+                boardLetters[i] = (char)('A' + i);
+            }
+
+            return boardLetters;
         }
     }
 }

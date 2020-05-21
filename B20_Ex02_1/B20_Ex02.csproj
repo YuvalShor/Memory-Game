@@ -44,6 +44,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="eGameModes.cs" />
+    <Compile Include="eGameStates.cs" />
     <Compile Include="ePlayerTypes.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="BoardLetter.cs" />
