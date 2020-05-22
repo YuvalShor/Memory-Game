@@ -29,12 +29,11 @@ namespace B20_Ex02
             m_GameData = new GameData(i_Player1, i_Player2, i_Width, i_Height);
             m_GameData.InitializeBoardMatrix();
             r_GameMode = i_GameMode;
-            m_SelectionNotMatching = false;
-            m_IsFirstSelection = true;
             s_CurrentGameState = eGameStates.Running;
-            m_FoundMatch = false;
 
-            if(r_GameMode == eGameModes.PlayerVsComputer)
+            initializeLogicData();
+
+            if (r_GameMode == eGameModes.PlayerVsComputer)
             {
                 m_AiMemory = new Dictionary<Cell, char>();
             }
@@ -116,6 +115,15 @@ namespace B20_Ex02
             }
         }
 
+        private void initializeLogicData()
+        {
+            m_SelectionNotMatching = false;
+            m_IsFirstSelection = true;
+            m_FoundMatch = false;
+            m_AiHasMatches = false;
+        }
+
+
         public void UpdateData(Cell i_UserSelection)
         {
             if(!m_SelectionNotMatching)
@@ -167,6 +175,7 @@ namespace B20_Ex02
                 {
                     if (r_GameMode == eGameModes.PlayerVsComputer)
                     { 
+                        removeLetterFromAiMemory(m_SecondSelection.Letter);
                         removeLetterFromAiMemory(m_SecondSelection.Letter);
                     }
 
@@ -272,8 +281,9 @@ namespace B20_Ex02
             m_GameData.Height = i_Height;
             m_GameData.Width = i_Width;
             m_GameData.Letters = new BoardLetter[i_Height, i_Width];
-
             m_GameData.InitializeBoardMatrix();
+
+            initializeLogicData();
 
             s_CurrentGameState = eGameStates.Running;
         }

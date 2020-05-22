@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using System.Text;
 
 namespace B20_Ex02
 {
@@ -148,17 +150,18 @@ namespace B20_Ex02
         public void DrawData()
         {
             int amountOfEqualSigns = (m_GameLogic.Width * 4) + 1;
-            string equalLine = new string('=', amountOfEqualSigns);
+            string equalLine = string.Format("  {0}", new string('=', amountOfEqualSigns));
 
             ClearWindow();
             drawTurnStatus();
             drawTopLetterRow(m_GameLogic.Width);
-            Console.WriteLine("  " + equalLine);
+
+            Console.WriteLine(equalLine);
 
             for (int i = 0; i < m_GameLogic.Height; i++)
             {
-                drawRowAtIndex(i, m_GameLogic.Letters);
-                Console.WriteLine("  " + equalLine);
+                drawRowAtIndex(i);
+                Console.WriteLine(equalLine);
             }
 
             Console.WriteLine();
@@ -279,27 +282,28 @@ namespace B20_Ex02
 
         private void drawTopLetterRow(int i_LengthOfRow)
         {
-            Console.Write(" ");
+            StringBuilder topRowToPrint = new StringBuilder(" ");
+
             for (int i = 0; i < i_LengthOfRow; i++)
             {
-                Console.Write("   " + (char)(i + 'A'));
+                topRowToPrint.Append(string.Format("   {0}", (char)(i + 'A')));
             }
 
-            Console.WriteLine();
+            Console.WriteLine(topRowToPrint.ToString());
         }
 
-        private void drawRowAtIndex(int i_Index, BoardLetter[,] i_BoardLetterRow)
+        private void drawRowAtIndex(int i_Index)
         {
-            int width = i_BoardLetterRow.GetLength(1);
+            string beginningOfRow = string.Format("{0} |", i_Index + 1);
 
-            Console.Write((i_Index + 1) + " |");
-            for (int j = 0; j < width; j++)
+            Console.Write(beginningOfRow);
+
+            for (int j = 0; j < m_GameLogic.Width; j++)
             {
-                BoardLetter currentBoardLetter = i_BoardLetterRow[i_Index, j];
+                BoardLetter currentBoardLetter = m_GameLogic.Letters[i_Index, j];
+                string squareToPrint = string.Format(" {0} |", currentBoardLetter.IsHidden ? ' ' : currentBoardLetter.Letter);
 
-                Console.Write(" ");
-                Console.Write(currentBoardLetter.IsHidden ? ' ' : currentBoardLetter.Letter);
-                Console.Write(" |");
+                Console.Write(squareToPrint);
             }
 
             Console.WriteLine();
