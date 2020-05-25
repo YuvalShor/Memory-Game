@@ -4,22 +4,22 @@ namespace B20_Ex02
 {
     internal class GameData
     {
-        private Player m_PlayerOne;
-        private Player m_PlayerTwo;
+        private readonly Player r_PlayerOne;
+        private readonly Player r_PlayerTwo;
         private Player m_CurrentPlayer;
         private BoardLetter[,] m_Letters;
-        private int m_Height;
-        private int m_Width;
+        private int m_BoardHeight;
+        private int m_BoardWidth;
 
-        public GameData(Player i_PlayerOne, Player i_PlayerTwo, int i_Width, int i_Height)
+        public GameData(Player i_PlayerOne, Player i_PlayerTwo, int i_BoardWidth, int i_BoardHeight)
         {
-            m_PlayerOne = i_PlayerOne;
-            m_PlayerTwo = i_PlayerTwo;
-            m_Width = i_Width;
-            m_Height = i_Height;
+            r_PlayerOne = i_PlayerOne;
+            r_PlayerTwo = i_PlayerTwo;
+            m_BoardWidth = i_BoardWidth;
+            m_BoardHeight = i_BoardHeight;
 
-            m_CurrentPlayer = m_PlayerOne;
-            m_Letters = new BoardLetter[Height, Width];
+            m_CurrentPlayer = r_PlayerOne;
+            m_Letters = new BoardLetter[BoardHeight, BoardWidth];
         }
 
         public BoardLetter[,] Letters
@@ -48,29 +48,29 @@ namespace B20_Ex02
             }
         }
 
-        public int Height
+        public int BoardHeight
         {
             get
             {
-                return m_Height;
+                return m_BoardHeight;
             }
 
             set
             {
-                m_Height = value;
+                m_BoardHeight = value;
             }
         }
 
-        public int Width
+        public int BoardWidth
         {
             get
             {
-                return m_Width;
+                return m_BoardWidth;
             }
 
             set
             {
-                m_Width = value;
+                m_BoardWidth = value;
             }
         }
 
@@ -78,7 +78,7 @@ namespace B20_Ex02
         {
             get
             {
-                return m_PlayerOne;
+                return r_PlayerOne;
             }
         }
 
@@ -86,7 +86,7 @@ namespace B20_Ex02
         {
             get
             {
-                return m_PlayerTwo;
+                return r_PlayerTwo;
             }
         }
 
@@ -97,11 +97,11 @@ namespace B20_Ex02
 
             foreach(char letter in boardLetters)
             {
-                int randomSelection = GameLogic.GetRandomNumber(0, randomCells.Count);
+                int randomSelection = GameLogicManager.GetRandomNumber(0, randomCells.Count);
                 Cell firstCell = randomCells[randomSelection];
 
                 randomCells.Remove(firstCell);
-                randomSelection = GameLogic.GetRandomNumber(0, randomCells.Count);
+                randomSelection = GameLogicManager.GetRandomNumber(0, randomCells.Count);
 
                 Cell secondCell = randomCells[randomSelection];
 
@@ -114,11 +114,11 @@ namespace B20_Ex02
 
         private List<Cell> getRandomCellsList()
         {
-            List<Cell> randomCells = new List<Cell>(m_Height * m_Width);
+            List<Cell> randomCells = new List<Cell>(m_BoardHeight * m_BoardWidth);
 
-            for(int i = 0; i < m_Height; i++)
+            for(int i = 0; i < m_BoardHeight; i++)
             {
-                for(int j = 0; j < m_Width; j++)
+                for(int j = 0; j < m_BoardWidth; j++)
                 {
                     randomCells.Add(new Cell(i, j));
                 }
@@ -129,7 +129,7 @@ namespace B20_Ex02
 
         private char[] initializeBoardLetters()
         {
-            char[] boardLetters = new char[m_Height * m_Width / 2];
+            char[] boardLetters = new char[m_BoardHeight * m_BoardWidth / 2];
 
             for(int i = 0; i < boardLetters.Length; i++)
             {

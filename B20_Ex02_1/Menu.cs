@@ -18,21 +18,21 @@ namespace B20_Ex02
             return desiredGameMode;
         }
 
-        public void GetBoardSize(out int io_Height, out int io_Width)
+        public void GetBoardSize(out int o_Height, out int o_Width)
         {
             bool isBoardSizeEven = false;
-            io_Height = 6;
-            io_Width = 6;
+            o_Height = 6;
+            o_Width = 6;
 
             while (!isBoardSizeEven)
             {
                 Console.WriteLine("Choose board height:");
-                io_Height = GameUI.GetNumberInRange(4, 6);
+                o_Height = GameUIManager.GetNumberInRange(4, 6);
 
                 Console.WriteLine("Choose board width:");
-                io_Width = GameUI.GetNumberInRange(4, 6);
+                o_Width = GameUIManager.GetNumberInRange(4, 6);
 
-                isBoardSizeEven = (io_Height * io_Width) % 2 == 0;
+                isBoardSizeEven = (o_Height * o_Width) % 2 == 0;
 
                 if(!isBoardSizeEven)
                 {
@@ -56,7 +56,7 @@ namespace B20_Ex02
 
             if (playerSelection == "1")
             {
-                Console.WriteLine("Please enter player 2 name:");
+                Console.WriteLine("Please enter a name for player 2:");
                 o_PlayerTwoName = Console.ReadLine();
                 selectedGameMode = eGameModes.PlayerVsPlayer;
             }
@@ -70,7 +70,7 @@ namespace B20_Ex02
 
             while(playerSelection != "1" && playerSelection != "2")
             {
-                Console.WriteLine("Wrong option entered. Please enter a different number: ");
+                Console.WriteLine("Wrong option entered. Please select option 1 or 2.");
                 playerSelection = Console.ReadLine();
             }
 

@@ -44,8 +44,8 @@
     <Compile Include="ePlayerTypes.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="BoardLetter.cs" />
-    <Compile Include="GameUI.cs" />
-    <Compile Include="GameLogic.cs" />
+    <Compile Include="GameUIManager.cs" />
+    <Compile Include="GameLogicManager.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Cell.cs" />

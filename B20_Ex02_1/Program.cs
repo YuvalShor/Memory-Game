@@ -4,8 +4,8 @@
     {
         public static void Main(string[] i_Args)
         {
-           GameUI gameUI = new GameUI();
-           gameUI.StartGame();
+           GameUIManager gameUiManager = new GameUIManager();
+           gameUiManager.StartGame();
         }
     }
 }
