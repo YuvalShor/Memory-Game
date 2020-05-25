@@ -292,7 +292,7 @@ namespace B20_Ex02
             if(r_AiMemory.Count == 0)
             {
                 m_AiHasMatches = false;
-                aiSelection = getRandomUnmemorizedSquare();
+                aiSelection = getRandomUnmemorizedCell();
             }
             else
             {
@@ -317,7 +317,7 @@ namespace B20_Ex02
             else
             {
                 m_AiHasMatches = false;
-                firstSelection = getRandomUnmemorizedSquare();
+                firstSelection = getRandomUnmemorizedCell();
             }
 
             return firstSelection;
@@ -342,7 +342,7 @@ namespace B20_Ex02
                 else
                 {
                     m_AiHasMatches = false;
-                    secondSelection = getRandomUnmemorizedSquare();
+                    secondSelection = getRandomUnmemorizedCell();
                 }
             }
 
@@ -368,7 +368,7 @@ namespace B20_Ex02
             return foundLetter;
         }
 
-        private string getRandomUnmemorizedSquare()
+        private string getRandomUnmemorizedCell()
         {
             int row = Letters.GetLength(0);
             int column = Letters.GetLength(1);

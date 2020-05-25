@@ -198,7 +198,7 @@ namespace B20_Ex02
             Console.WriteLine();
         }
 
-        private bool validateUserSquareSelection(string i_UserInput)
+        private bool validateUserCellSelection(string i_UserInput)
         {
             bool isValidInput = true;
             
@@ -212,7 +212,7 @@ namespace B20_Ex02
 
                     if(isValidInput)
                     {
-                        isValidInput = checkSquareNotAlreadyRevealed(i_UserInput);
+                        isValidInput = checkCellNotAlreadyRevealed(i_UserInput);
                     }
                 }
             }
@@ -277,7 +277,7 @@ namespace B20_Ex02
             return isValidDigit;
         }
 
-        private bool checkSquareNotAlreadyRevealed(string i_UserInput)
+        private bool checkCellNotAlreadyRevealed(string i_UserInput)
         {
             int column = i_UserInput[0] - 'A';
             int row = i_UserInput[1] - '1';
@@ -286,7 +286,7 @@ namespace B20_Ex02
 
             if(!isValidInput)
             {
-                Console.WriteLine("Square already revealed");
+                Console.WriteLine("Cell already revealed");
             }
 
             return isValidInput;
@@ -313,9 +313,9 @@ namespace B20_Ex02
             for (int j = 0; j < m_GameLogicManager.BoardWidth; j++)
             {
                 BoardLetter currentBoardLetter = m_GameLogicManager.Letters[i_Index, j];
-                string squareToPrint = string.Format(" {0} |", currentBoardLetter.IsHidden ? ' ' : currentBoardLetter.Letter);
+                string CellToProint = string.Format(" {0} |", currentBoardLetter.IsHidden ? ' ' : currentBoardLetter.Letter);
 
-                Console.Write(squareToPrint);
+                Console.Write(CellToProint);
             }
 
             Console.WriteLine();
@@ -328,10 +328,10 @@ namespace B20_Ex02
 
             while(!isValidInput)
             {
-                Console.WriteLine("{0}, please choose a square to reveal:", m_GameLogicManager.CurrentPlayer.PlayerName);
+                Console.WriteLine("{0}, please choose a cell to reveal:", m_GameLogicManager.CurrentPlayer.PlayerName);
                 
                 userInput = Console.ReadLine();
-                isValidInput = validateUserSquareSelection(userInput);
+                isValidInput = validateUserCellSelection(userInput);
             }
 
             return userInput.ToUpper();
