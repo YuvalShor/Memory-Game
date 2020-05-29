@@ -159,9 +159,11 @@ namespace B20_Ex02
 
             eGameModes desiredGameMode = r_Menu.Run(out playerName1, out playerName2, out width, out height);
             Player playerOne = new Player(playerName1, ePlayerTypes.Human);
-            ePlayerTypes type = desiredGameMode == eGameModes.PlayerVsPlayer ? ePlayerTypes.Human : ePlayerTypes.Computer;
+            ePlayerTypes type = desiredGameMode == eGameModes.PlayerVsPlayer
+                                    ? ePlayerTypes.Human
+                                    : ePlayerTypes.Computer;
             Player playerTwo = new Player(playerName2, type);
-            
+
             m_GameLogicManager = new GameLogicManager(playerOne, playerTwo, width, height, desiredGameMode);
         }
 

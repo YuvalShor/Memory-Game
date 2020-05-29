@@ -6,19 +6,15 @@ namespace B20_Ex02
     internal class GameLogicManager
     {
         private const int k_DifficultyOdds = 80;
-
+        private const int k_MinBoardWidth = 4;
+        private const int k_MaxBoardWidth = 6;
+        private const int k_MinBoardHeight = 4;
+        private const int k_MaxBoardHeight = 6;
         private static readonly Random sr_Random = new Random();
-        public const int k_MinBoardWidth = 4;
-        public const int k_MaxBoardWidth = 6;
-        public const int k_MinBoardHeight = 4;
-        public const int k_MaxBoardHeight = 6;
-
         private static eGameStates s_CurrentGameState = eGameStates.Menu;
-
         private readonly eGameModes r_GameMode;
         private readonly GameData r_GameData;
         private readonly Dictionary<Cell, char> r_AiMemory;
-
         private Cell m_AiSelection;
         private Cell m_CurrentUserSelection;
         private Cell m_PreviousUserSelection;
@@ -44,6 +40,38 @@ namespace B20_Ex02
             if (r_GameMode == eGameModes.PlayerVsComputer)
             {
                 r_AiMemory = new Dictionary<Cell, char>();
+            }
+        }
+
+        public static int MinBoardWidth
+        {
+            get
+            {
+                return k_MinBoardWidth;
+            }
+        }
+
+        public static int MaxBoardWidth
+        {
+            get
+            {
+                return k_MaxBoardWidth;
+            }
+        }
+
+        public static int MinBoardHeight
+        {
+            get
+            {
+                return k_MinBoardHeight;
+            }
+        }
+
+        public static int MaxBoardHeight
+        {
+            get
+            {
+                return k_MaxBoardHeight;
             }
         }
 

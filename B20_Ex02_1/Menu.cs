@@ -27,10 +27,14 @@ namespace B20_Ex02
             while (!isBoardSizeEven)
             {
                 Console.WriteLine("Choose board height:");
-                o_Height = GameUIManager.GetNumberInRange(4, 6);
+                o_Height = GameUIManager.GetNumberInRange(
+                    GameLogicManager.MinBoardHeight,
+                    GameLogicManager.MaxBoardHeight);
 
                 Console.WriteLine("Choose board width:");
-                o_Width = GameUIManager.GetNumberInRange(4, 6);
+                o_Width = GameUIManager.GetNumberInRange(
+                    GameLogicManager.MinBoardWidth,
+                    GameLogicManager.MaxBoardWidth);
 
                 isBoardSizeEven = (o_Height * o_Width) % 2 == 0;
 
