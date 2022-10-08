@@ -2,7 +2,7 @@
 
 A classic memory card console game built with C#.
 
-This project is a part of me and Avital Shumonov's ([Laddeus](https://github.com/Laddeus)) C# & .NET Environment OOP course.
+This project is a part of me and [Laddeus's](https://github.com/Laddeus) C# & .NET Environment OOP course.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/10600102/146855140-d07417a1-f097-44ff-be1f-69b5f764555f.png" alt="screenshot" />
